@@ -1,0 +1,397 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": ""
+      },
+      "id": "80725ce7-580b-4820-b02d-b4834698f70f",
+      "name": "LinkedIn Content Parser1",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "position": [
+        -3776,
+        112
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "prompt": "={{ $json.image }}",
+        "options": {}
+      },
+      "id": "f1b7708d-6e7f-47b9-a759-1d48daa2ead5",
+      "name": "OpenAI Image Generator1",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "position": [
+        -3280,
+        320
+      ],
+      "typeVersion": 1.8,
+      "alwaysOutputData": true,
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "="
+        }
+      },
+      "id": "31478b66-e417-48df-b8ec-44770223a92f",
+      "name": "LinkedIn Content Factory1",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        -3952,
+        -112
+      ],
+      "retryOnFail": true,
+      "typeVersion": 1.7
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "options": {
+          "responseFormat": "text"
+        }
+      },
+      "id": "fed3d76e-278a-4a45-b357-a35cf72382fd",
+      "name": "gpt-4o LLM",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "position": [
+        -3952,
+        112
+      ],
+      "typeVersion": 1.2
+    },
+    {
+      "parameters": {
+        "updates": [
+          "callback_query"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -4176,
+        416
+      ],
+      "id": "509c19a0-080f-497a-8998-b021793a1914",
+      "name": "Telegram Button Trigger1",
+      "webhookId": "unique-webhook-id",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.callback_query.data }}",
+              "rightValue": "approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              },
+              "id": "a942212f-7dcd-4d3b-b448-812f5ed0abe3"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3952,
+        416
+      ],
+      "id": "ed7ca019-084a-4545-8beb-5fc7f8349df2",
+      "name": "Check Approval1"
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{ $json.callback_query.id }}",
+        "additionalFields": {
+          "text": "✅ Approved! Publishing..."
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3728,
+        320
+      ],
+      "id": "12e5b77e-92cb-4f02-9998-071e6078c8b3",
+      "name": "Answer Approved1",
+      "webhookId": "312d1998-7196-4da9-b494-cdff667c6913",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "resource": "callback",
+        "queryId": "={{ $json.callback_query.id }}",
+        "additionalFields": {
+          "text": "❌ Rejected. Post cancelled."
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3728,
+        512
+      ],
+      "id": "a321c9be-8281-48f7-9ff6-6b5926d7cf17",
+      "name": "Answer Rejected1",
+      "webhookId": "0f950772-a617-41ba-8c53-6235765468b0",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "text": "=",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {}
+          ]
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3600,
+        -112
+      ],
+      "id": "1ba1bf31-348e-4d89-b3f3-faddd074a4f4",
+      "name": "Send Approval Message1",
+      "webhookId": "ff893cd7-2809-4561-8a51-e1d2bc9e0549"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3504,
+        320
+      ],
+      "id": "27c2bc23-511f-44a7-ac18-7075c4c1b462",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -4176,
+        -112
+      ],
+      "id": "e476663d-ca61-4a5c-acb0-839fdd23d2f7",
+      "name": "Schedule Trigger1"
+    },
+    {
+      "parameters": {
+        "person": "=",
+        "text": "={{ $('Code in JavaScript').item.json.linkedInPost }}",
+        "shareMediaCategory": "IMAGE",
+        "additionalFields": {}
+      },
+      "id": "3169947e-9608-44a0-b727-fdf90ef9d88f",
+      "name": "LinkedIn Post",
+      "type": "n8n-nodes-base.linkedIn",
+      "position": [
+        -2848,
+        416
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "1518661497",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "={{ $('Code in JavaScript').item.json.linkedInPost }}",
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3056,
+        224
+      ],
+      "id": "502dfad6-797d-4daf-9329-ed5fe4903e38",
+      "name": "Send Success Message",
+      "webhookId": "171d7c57-199e-4d15-8773-35a3fa631c74",
+      "credentials": {}
+    },
+    {
+      "parameters": {
+        "amount": 7
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -3056,
+        416
+      ],
+      "id": "706bfcb6-513f-4caf-9124-b77848ab7025",
+      "name": "Wait1",
+      "webhookId": "3d1615e8-0b50-420f-910e-ff8506016351"
+    }
+  ],
+  "connections": {
+    "LinkedIn Content Parser1": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "LinkedIn Content Factory1",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Image Generator1": {
+      "main": [
+        [
+          {
+            "node": "Send Success Message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "LinkedIn Content Factory1": {
+      "main": [
+        [
+          {
+            "node": "Send Approval Message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "gpt-4o LLM": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "LinkedIn Content Factory1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Button Trigger1": {
+      "main": [
+        [
+          {
+            "node": "Check Approval1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Approval1": {
+      "main": [
+        [
+          {
+            "node": "Answer Approved1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Answer Rejected1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Answer Approved1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "OpenAI Image Generator1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger1": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Content Factory1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "LinkedIn Post",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e203b3915c55ada6381ff30d1624e106e829d6d1254c6e58c0e0db56701b6299"
+  }
+}
