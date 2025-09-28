@@ -1,6 +1,5 @@
 
 
-````markdown
 # LinkedIn Automation Workflow 🚀
 
 **Automate your LinkedIn posting – at zero cost!**
@@ -67,6 +66,6 @@ Contributions are welcome! Feel free to open issues or submit pull requests.
 
 This project is licensed under the MIT License.
 
-```
+
 
 
